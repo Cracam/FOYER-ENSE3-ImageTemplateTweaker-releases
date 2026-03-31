@@ -4,18 +4,101 @@
   <meta charset="UTF-8">
   <title>ImageTemplateTweaker — Téléchargement</title>
   <style>
-    body { font-family: sans-serif; max-width: 600px; margin: 60px auto; }
-    a.btn { display: block; padding: 12px 20px; margin: 10px 0;
-            background: #2ea44f; color: white; text-decoration: none;
-            border-radius: 6px; font-size: 16px; }
-    a.btn:hover { background: #22863a; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: sans-serif; max-width: 750px; margin: 0 auto; padding: 0 20px; color: #222; }
+
+    nav { display: flex; gap: 20px; padding: 16px 0; border-bottom: 2px solid #eee; margin-bottom: 30px; }
+    nav a { text-decoration: none; color: #0078d4; font-weight: bold; font-size: 15px; }
+    nav a:hover { text-decoration: underline; }
+    nav a.active { color: #222; border-bottom: 2px solid #222; padding-bottom: 2px; }
+
+    header { display: flex; align-items: center; gap: 16px; margin-bottom: 30px;
+             border-bottom: 2px solid #eee; padding-bottom: 20px; }
+    header img { width: 64px; height: 64px; object-fit: contain; }
+    header h1  { font-size: 28px; }
+    header p   { color: #666; margin-top: 4px; }
+
+    .release { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+    .release h2 { margin-bottom: 12px; font-size: 18px; }
+    .files { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    a.btn { display: inline-block; padding: 9px 15px; color: white;
+            text-decoration: none; border-radius: 6px; font-size: 13px; }
+    a.btn:hover { opacity: 0.85; }
+    .ext-exe   { background: #0078d4; }
+    .ext-deb   { background: #e95420; }
+    .ext-dmg   { background: #555;    }
+    .ext-jar   { background: #f89820; }
+    .ext-zip   { background: #6f42c1; }
+    .ext-pdf   { background: #c0392b; }
+    .ext-other { background: #888;    }
+
+    #loading { color: #888; margin-top: 20px; }
+    #error   { color: red;  margin-top: 20px; }
   </style>
 </head>
 <body>
-  <h1>ImageTemplateTweaker</h1>
-  <p>Version : <strong>1.7.0</strong></p>
-  <a class="btn" href="files/ImageTemplateTweaker-1.7.0.exe">⬇ Télécharger pour Windows (.exe)</a>
-  <a class="btn" href="files/ImageTemplateTweaker-1.7.0.deb">⬇ Télécharger pour Linux (.deb)</a>
-  <a class="btn" href="files/ImageTemplateTweaker-1.7.0.dmg">⬇ Télécharger pour macOS (.dmg)</a>
+
+  <nav>
+    <a href="index.html" class="active">⬇ Téléchargements</a>
+    <a href="videos.html">▶ Vidéos</a>
+  </nav>
+
+  <header>
+    <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
+    <div>
+      <h1>ImageTemplateTweaker</h1>
+      <p>Téléchargez la version pour votre système.</p>
+    </div>
+  </header>
+
+  <div id="loading">Chargement des versions...</div>
+  <div id="error" style="display:none"></div>
+  <div id="releases"></div>
+
+  <script>
+    const icons = { exe:'🪟', deb:'🐧', dmg:'🍎', jar:'☕', zip:'📦', pdf:'📄' };
+
+    function extClass(f) {
+      const ext = f.split('.').pop().toLowerCase();
+      return 'ext-' + (['exe','deb','dmg','jar','zip','pdf'].includes(ext) ? ext : 'other');
+    }
+    function extIcon(f) {
+      return icons[f.split('.').pop().toLowerCase()] || '📄';
+    }
+
+    fetch('files/manifest.json')
+      .then(r => { if (!r.ok) throw new Error('manifest.json introuvable'); return r.json(); })
+      .then(data => {
+        document.getElementById('loading').style.display = 'none';
+        const container = document.getElementById('releases');
+        const folders = Object.keys(data);
+
+        if (!folders.length) {
+          container.innerHTML = '<p>Aucun fichier disponible.</p>';
+          return;
+        }
+
+        // Trie versions numériques décroissantes
+        folders.sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+
+        folders.forEach(folder => {
+          const div = document.createElement('div');
+          div.className = 'release';
+          div.innerHTML = `<h2>Version ${folder}</h2><div class="files">` +
+            data[folder].map(f =>
+              `<a class="btn ${extClass(f)}" href="files/${folder}/${f}">${extIcon(f)} ${f}</a>`
+            ).join('') +
+          `</div>`;
+          container.appendChild(div);
+        });
+      })
+      .catch(err => {
+        document.getElementById('loading').style.display = 'none';
+        const el = document.getElementById('error');
+        el.style.display = 'block';
+        el.textContent = 'Erreur : ' + err.message;
+      });
+  </script>
 </body>
 </html>
