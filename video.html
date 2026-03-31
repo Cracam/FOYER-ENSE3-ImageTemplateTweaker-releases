@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>ImageTemplateTweaker — Vidéos</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: sans-serif; max-width: 750px; margin: 0 auto; padding: 0 20px; color: #222; }
+
+    nav { display: flex; gap: 20px; padding: 16px 0; border-bottom: 2px solid #eee; margin-bottom: 30px; }
+    nav a { text-decoration: none; color: #0078d4; font-weight: bold; font-size: 15px; }
+    nav a:hover { text-decoration: underline; }
+    nav a.active { color: #222; border-bottom: 2px solid #222; padding-bottom: 2px; }
+
+    header { display: flex; align-items: center; gap: 16px; margin-bottom: 30px;
+             border-bottom: 2px solid #eee; padding-bottom: 20px; }
+    header img { width: 64px; height: 64px; object-fit: contain; }
+    header h1  { font-size: 28px; }
+    header p   { color: #666; margin-top: 4px; }
+
+    .video-card { margin: 24px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+    .video-card h2 { margin-bottom: 8px; font-size: 18px; }
+    .video-card p  { color: #555; margin-bottom: 14px; font-size: 14px; }
+    .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 6px; }
+    .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html">⬇ Téléchargements</a>
+    <a href="videos.html" class="active">▶ Vidéos</a>
+  </nav>
+
+  <header>
+    <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
+    <div>
+      <h1>ImageTemplateTweaker</h1>
+      <p>Tutoriels et démonstrations.</p>
+    </div>
+  </header>
+
+  <!-- ===================== AJOUTE TES VIDÉOS ICI ===================== -->
+
+  <div class="video-card">
+    <h2>Présentation générale</h2>
+    <p>Découvrez les fonctionnalités principales de l'application.</p>
+    <div class="video-wrapper">
+      <!-- Remplace XXXXXXXXXXX par l'ID de ta vidéo YouTube -->
+      <iframe src="https://www.youtube.com/embed/XXXXXXXXXXX"
+              allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <div class="video-card">
+    <h2>Tutoriel : créer un template</h2>
+    <p>Apprenez à créer votre premier template pas à pas.</p>
+    <div class="video-wrapper">
+      <!-- Remplace YYYYYYYYYYY par l'ID de ta deuxième vidéo YouTube -->
+      <iframe src="https://www.youtube.com/embed/YYYYYYYYYYY"
+              allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+
+</body>
+</html>
