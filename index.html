@@ -57,6 +57,9 @@
   <div id="releases"></div>
 
   <script>
+    const REPO = 'Cracam/FOYER-ENSE3-ImageTemplateTweaker-releases';
+    const API  = `https://api.github.com/repos/${REPO}/contents/files`;
+
     const icons = { exe:'🪟', deb:'🐧', dmg:'🍎', jar:'☕', zip:'📦', pdf:'📄' };
 
     function extClass(f) {
@@ -66,31 +69,63 @@
     function extIcon(f) {
       return icons[f.split('.').pop().toLowerCase()] || '📄';
     }
+    function isVersion(name) {
+      return /^\d/.test(name);
+    }
 
-    fetch('files/manifest.json')
-      .then(r => { if (!r.ok) throw new Error('manifest.json introuvable'); return r.json(); })
-      .then(data => {
+    // Récupère les fichiers d'un dossier via l'API GitHub
+    function fetchFolder(folderName) {
+      return fetch(`${API}/${folderName}`)
+        .then(r => r.json())
+        .then(entries => entries
+          .filter(e => e.type === 'file')
+          .map(e => e.name)
+        );
+    }
+
+    // Récupère la liste des dossiers dans files/
+    fetch(API)
+      .then(r => {
+        if (!r.ok) throw new Error(`API GitHub inaccessible (${r.status})`);
+        return r.json();
+      })
+      .then(entries => {
         document.getElementById('loading').style.display = 'none';
-        const container = document.getElementById('releases');
-        const folders = Object.keys(data);
+
+        const folders = entries
+          .filter(e => e.type === 'dir')
+          .map(e => e.name)
+          .sort((a, b) => {
+            // Versions numériques décroissantes d'abord
+            if (isVersion(a) && isVersion(b)) return b.localeCompare(a, undefined, { numeric: true });
+            if (isVersion(a)) return -1;
+            if (isVersion(b)) return 1;
+            return a.localeCompare(b);
+          });
 
         if (!folders.length) {
-          container.innerHTML = '<p>Aucun fichier disponible.</p>';
+          document.getElementById('releases').innerHTML = '<p>Aucun fichier disponible.</p>';
           return;
         }
 
-        // Trie versions numériques décroissantes
-        folders.sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+        const container = document.getElementById('releases');
 
-        folders.forEach(folder => {
-          const div = document.createElement('div');
-          div.className = 'release';
-          div.innerHTML = `<h2>Version ${folder}</h2><div class="files">` +
-            data[folder].map(f =>
-              `<a class="btn ${extClass(f)}" href="files/${folder}/${f}">${extIcon(f)} ${f}</a>`
-            ).join('') +
-          `</div>`;
-          container.appendChild(div);
+        // Pour chaque dossier, charge ses fichiers puis affiche
+        Promise.all(folders.map(folder =>
+          fetchFolder(folder).then(files => ({ folder, files }))
+        )).then(results => {
+          results.forEach(({ folder, files }) => {
+            if (!files.length) return;
+            const label = isVersion(folder) ? `Version ${folder}` : `📁 ${folder}`;
+            const div = document.createElement('div');
+            div.className = 'release';
+            div.innerHTML = `<h2>${label}</h2><div class="files">` +
+              files.map(f =>
+                `<a class="btn ${extClass(f)}" href="files/${folder}/${f}">${extIcon(f)} ${f}</a>`
+              ).join('') +
+            `</div>`;
+            container.appendChild(div);
+          });
         });
       })
       .catch(err => {
