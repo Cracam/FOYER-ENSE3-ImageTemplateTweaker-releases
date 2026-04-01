@@ -5,7 +5,7 @@
   <title>ImageTemplateTweaker — Téléchargement</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: sans-serif; max-width: 750px; margin: 0 auto; padding: 0 20px; color: #222; }
+    body { font-family: sans-serif; max-width: 1100px; margin: 0 auto; padding: 0 20px; color: #222; }
 
     nav { display: flex; gap: 20px; padding: 16px 0; border-bottom: 2px solid #eee; margin-bottom: 30px; }
     nav a { text-decoration: none; color: #0078d4; font-weight: bold; font-size: 15px; }
@@ -17,6 +17,18 @@
     header img { width: 128px; height: 128px; object-fit: contain; }
     header h1  { font-size: 28px; }
     header p   { color: #666; margin-top: 4px; }
+
+    /* Mise en page deux colonnes */
+    .layout {
+      display: grid;
+      grid-template-columns: 2fr 1.4fr;
+      gap: 32px;
+      align-items: flex-start;
+    }
+
+    /* Colonne gauche : téléchargements */
+    #loading { color: #888; margin-top: 20px; }
+    #error   { color: red;  margin-top: 20px; }
 
     .release { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
     .release h2 { margin-bottom: 12px; font-size: 18px; }
@@ -33,9 +45,42 @@
     .ext-pdf   { background: #c0392b; }
     .ext-other { background: #888;    }
 
-    #loading { color: #888; margin-top: 20px; }
-    #error   { color: red;  margin-top: 20px; }
+    /* Colonne droite : diagramme */
+    .diagram-panel {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px 16px 24px;
+      background: #fafafa;
+    }
+    .diagram-panel h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+    .diagram-panel p {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 12px;
+    }
+
+    /* Diagramme Mermaid responsive */
+    .mermaid {
+      max-width: 100%;
+      overflow: auto;
+    }
+
+    /* Optionnel : meilleure lisibilité sur petits écrans */
+    @media (max-width: 800px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
+
+  <!-- Mermaid.js -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true });
+  </script>
 </head>
 <body>
 
@@ -52,9 +97,25 @@
     </div>
   </header>
 
-  <div id="loading">Chargement des versions...</div>
-  <div id="error" style="display:none"></div>
-  <div id="releases"></div>
+  <div class="layout">
+    <!-- Colonne gauche : téléchargements -->
+    <main>
+      <div id="loading">Chargement des versions...</div>
+      <div id="error" style="display:none"></div>
+      <div id="releases"></div>
+    </main>
+
+    <!-- Colonne droite : diagramme indépendant -->
+    <aside class="diagram-panel">
+      <h2>Comment utiliser ImageTemplateTweaker&nbsp;?</h2>
+      <p>Étapes principales pour utiliser l’application :</p>
+      <div class="mermaid">
+        flowchart TD
+          A["⬇ Télécharger l'exécutable"] --> B["Mettre les modèles<br/>et les mots de passe"]
+          B --> C["✏️ Éditer sa carte !"]
+      </div>
+    </aside>
+  </div>
 
   <script>
     const REPO = 'Cracam/FOYER-ENSE3-ImageTemplateTweaker-releases';
