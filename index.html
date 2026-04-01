@@ -19,10 +19,7 @@
     header p   { color: #666; margin-top: 4px; }
 
     .release { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
-    .release h2 { margin-bottom: 4px; font-size: 18px; }
-    .release .date { color: #888; font-size: 12px; margin-bottom: 12px; }
-    .release .notes { color: #444; font-size: 13px; margin-bottom: 12px;
-                      border-left: 3px solid #eee; padding-left: 10px; }
+    .release h2 { margin-bottom: 12px; font-size: 18px; }
     .files { display: flex; flex-wrap: wrap; gap: 8px; }
 
     a.btn { display: inline-block; padding: 9px 15px; color: white;
@@ -48,7 +45,7 @@
   </nav>
 
   <header>
-    <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
+    <img src="logo." alt="Logo" onerror="this.style.display='none'">
     <div>
       <h1>ImageTemplateTweaker</h1>
       <p>Téléchargez la version pour votre système.</p>
@@ -60,8 +57,8 @@
   <div id="releases"></div>
 
   <script>
-    const REPO = 'Cracam/ImageTemplateTweaker';
-    const API  = `https://api.github.com/repos/${REPO}/releases`;
+    const REPO = 'Cracam/FOYER-ENSE3-ImageTemplateTweaker-releases';
+    const API  = `https://api.github.com/repos/${REPO}/contents/files`;
 
     const icons = { exe:'🪟', deb:'🐧', dmg:'🍎', jar:'☕', zip:'📦', pdf:'📄' };
 
@@ -72,41 +69,63 @@
     function extIcon(f) {
       return icons[f.split('.').pop().toLowerCase()] || '📄';
     }
+    function isVersion(name) {
+      return /^\d/.test(name);
+    }
 
+    // Récupère les fichiers d'un dossier via l'API GitHub
+    function fetchFolder(folderName) {
+      return fetch(`${API}/${folderName}`)
+        .then(r => r.json())
+        .then(entries => entries
+          .filter(e => e.type === 'file')
+          .map(e => e.name)
+        );
+    }
+
+    // Récupère la liste des dossiers dans files/
     fetch(API)
       .then(r => {
-        if (!r.ok) throw new Error(`Impossible de charger les releases (${r.status})`);
+        if (!r.ok) throw new Error(`API GitHub inaccessible (${r.status})`);
         return r.json();
       })
-      .then(releases => {
+      .then(entries => {
         document.getElementById('loading').style.display = 'none';
-        const container = document.getElementById('releases');
 
-        if (!releases.length) {
-          container.innerHTML = '<p>Aucune release disponible.</p>';
+        const folders = entries
+          .filter(e => e.type === 'dir')
+          .map(e => e.name)
+          .sort((a, b) => {
+            // Versions numériques décroissantes d'abord
+            if (isVersion(a) && isVersion(b)) return b.localeCompare(a, undefined, { numeric: true });
+            if (isVersion(a)) return -1;
+            if (isVersion(b)) return 1;
+            return a.localeCompare(b);
+          });
+
+        if (!folders.length) {
+          document.getElementById('releases').innerHTML = '<p>Aucun fichier disponible.</p>';
           return;
         }
 
-        releases.forEach(release => {
-          const assets = release.assets.filter(a => !a.name.endsWith('.zip')); // exclut source zips
-          if (!assets.length) return;
+        const container = document.getElementById('releases');
 
-          const date = new Date(release.published_at).toLocaleDateString('fr-FR', {
-            year: 'numeric', month: 'long', day: 'numeric'
-          });
-
-          const div = document.createElement('div');
-          div.className = 'release';
-          div.innerHTML =
-            `<h2>${release.tag_name}</h2>` +
-            `<div class="date">📅 ${date}</div>` +
-            (release.body ? `<div class="notes">${release.body.replace(/\n/g,'<br>')}</div>` : '') +
-            `<div class="files">` +
-              assets.map(a =>
-                `<a class="btn ${extClass(a.name)}" href="${a.browser_download_url}">${extIcon(a.name)} ${a.name}</a>`
+        // Pour chaque dossier, charge ses fichiers puis affiche
+        Promise.all(folders.map(folder =>
+          fetchFolder(folder).then(files => ({ folder, files }))
+        )).then(results => {
+          results.forEach(({ folder, files }) => {
+            if (!files.length) return;
+            const label = isVersion(folder) ? `Version ${folder}` : `📁 ${folder}`;
+            const div = document.createElement('div');
+            div.className = 'release';
+            div.innerHTML = `<h2>${label}</h2><div class="files">` +
+              files.map(f =>
+                `<a class="btn ${extClass(f)}" href="files/${folder}/${f}">${extIcon(f)} ${f}</a>`
               ).join('') +
             `</div>`;
-          container.appendChild(div);
+            container.appendChild(div);
+          });
         });
       })
       .catch(err => {
