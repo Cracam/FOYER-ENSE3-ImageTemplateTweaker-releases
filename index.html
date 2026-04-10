@@ -34,6 +34,15 @@
     .latest-label { background: #28a745; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; vertical-align: middle; margin-left: 10px; }
     
     .files { display: flex; flex-wrap: wrap; gap: 8px; }
+    .file-group { margin-bottom: 15px; }
+    .file-group-title { 
+        font-size: 14px; 
+        font-weight: bold; 
+        color: #555; 
+        margin-bottom: 8px; 
+        border-left: 3px solid #0078d4; 
+        padding-left: 8px; 
+    }
 
     a.btn { display: inline-block; padding: 9px 15px; color: white;
             text-decoration: none; border-radius: 6px; font-size: 13px; }
@@ -191,21 +200,47 @@
         )).then(results => {
           results.forEach(({ folder, files }, index) => {
             if (!files.length) return;
+        
+            // --- LOGIQUE DE RÉPARTITION ---
+            const installers = files.filter(f => {
+              const ext = f.split('.').pop().toLowerCase();
+              return ['exe', 'deb', 'dmg'].includes(ext);
+            });
             
+            const others = files.filter(f => {
+              const ext = f.split('.').pop().toLowerCase();
+              return !['exe', 'deb', 'dmg'].includes(ext);
+            });
+        
             const isLatest = (index === 0);
             const label = isVersion(folder) ? `Version ${folder}` : `📁 ${folder}`;
             const div = document.createElement('div');
             div.className = 'release';
-            
+        
             let html = `<h2>${label}`;
             if (isLatest) html += `<span class="latest-label">Dernière version</span>`;
-            html += `</h2><div class="files">`;
-            html += files.map(f =>
-                `<a class="btn ${extClass(f)}" href="files/${folder}/${f}">${extIcon(f)} ${f}</a>`
-              ).join('');
-            html += `</div>`;
+            html += `</h2>`;
+        
+            // 1. Groupe Installeurs
+            if (installers.length > 0) {
+              html += `<div class="file-group">
+                        <div class="file-group-title">🛠️ Installeurs</div>
+                        <div class="files">` +
+                        installers.map(f => `<a class="btn ${extClass(f)}" href="files/${folder}/${f}">${extIcon(f)} ${f}</a>`).join('') +
+                      `</div></div>`;
+            }
+        
+            // 2. Groupe Données Cartes
+            if (others.length > 0) {
+              html += `<div class="file-group">
+                        <div class="file-group-title">📂 Données cartes foyers</div>
+                        <div class="files">` +
+                        others.map(f => `<a class="btn ${extClass(f)}" href="files/${folder}/${f}">${extIcon(f)} ${f}</a>`).join('') +
+                      `</div></div>`;
+            }
+        
             div.innerHTML = html;
-
+        
             if (isLatest) {
               latestContainer.appendChild(div);
             } else {
