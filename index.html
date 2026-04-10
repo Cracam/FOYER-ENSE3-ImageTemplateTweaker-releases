@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>ImageTemplateTweaker — Téléchargement</title>
   <style>
+    /* ... (styles existants conservés) ... */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: sans-serif; max-width: 1100px; margin: 0 auto; padding: 0 20px; color: #222; }
 
@@ -18,7 +19,6 @@
     header h1  { font-size: 28px; }
     header p   { color: #666; margin-top: 4px; }
 
-    /* Mise en page deux colonnes */
     .layout {
       display: grid;
       grid-template-columns: 2fr 1.4fr;
@@ -26,12 +26,13 @@
       align-items: flex-start;
     }
 
-    /* Colonne gauche : téléchargements */
     #loading { color: #888; margin-top: 20px; }
     #error   { color: red;  margin-top: 20px; }
 
     .release { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
     .release h2 { margin-bottom: 12px; font-size: 18px; }
+    .latest-label { background: #28a745; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; vertical-align: middle; margin-left: 10px; }
+    
     .files { display: flex; flex-wrap: wrap; gap: 8px; }
 
     a.btn { display: inline-block; padding: 9px 15px; color: white;
@@ -45,42 +46,46 @@
     .ext-pdf   { background: #c0392b; }
     .ext-other { background: #888;    }
 
-    /* Colonne droite : diagramme */
+    /* Styles pour les anciennes versions */
+    #old-releases-container { display: none; margin-top: 20px; border-top: 2px dashed #ccc; padding-top: 20px; }
+    .warning-box {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .show-old-btn {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .show-old-btn:hover { background: #5a6268; }
+
     .diagram-panel {
       border: 1px solid #ddd;
       border-radius: 8px;
       padding: 16px 16px 24px;
       background: #fafafa;
     }
-    .diagram-panel h2 {
-      font-size: 18px;
-      margin-bottom: 12px;
-    }
-    .diagram-panel p {
-      font-size: 14px;
-      color: #555;
-      margin-bottom: 12px;
-    }
+    .diagram-panel h2 { font-size: 18px; margin-bottom: 12px; }
+    .diagram-panel p { font-size: 14px; color: #555; margin-bottom: 12px; }
+    .mermaid { max-width: 100%; overflow: auto; }
 
-    /* Diagramme Mermaid responsive */
-    .mermaid {
-      max-width: 100%;
-      overflow: auto;
-    }
-
-    /* Optionnel : meilleure lisibilité sur petits écrans */
     @media (max-width: 800px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
+      .layout { grid-template-columns: 1fr; }
     }
   </style>
 
-  <!-- Mermaid.js -->
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-  <script>
-    mermaid.initialize({ startOnLoad: true });
-  </script>
+  <script>mermaid.initialize({ startOnLoad: true });</script>
 </head>
 <body>
 
@@ -93,19 +98,30 @@
     <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
     <div>
       <h1>ImageTemplateTweaker</h1>
-      <p>Téléchargez la version pour votre système.</p>
+      <p>Téléchargez la version la plus récente pour votre système.</p>
     </div>
   </header>
 
   <div class="layout">
-    <!-- Colonne gauche : téléchargements -->
     <main>
       <div id="loading">Chargement des versions...</div>
       <div id="error" style="display:none"></div>
-      <div id="releases"></div>
+      
+      <!-- Zone pour la dernière version -->
+      <div id="latest-release"></div>
+
+      <!-- Zone pour les anciennes versions (masquée par défaut) -->
+      <div id="old-releases-toggle" style="display:none">
+        <div class="warning-box">
+          <p style="margin-bottom: 10px;">⚠️ <strong>Attention :</strong> Les versions ci-dessous sont anciennes et peuvent contenir des bugs ou ne plus être supportées.</p>
+          <button class="show-old-btn" onclick="document.getElementById('old-releases-container').style.display='block'; this.parentElement.style.display='none'">
+            Afficher les anciennes versions (déconseillé)
+          </button>
+        </div>
+        <div id="old-releases-container"></div>
+      </div>
     </main>
 
-    <!-- Colonne droite : diagramme indépendant -->
     <aside class="diagram-panel">
       <h2>Comment utiliser ImageTemplateTweaker&nbsp;?</h2>
       <p>Étapes principales pour utiliser l’application :</p>
@@ -134,7 +150,6 @@
       return /^\d/.test(name);
     }
 
-    // Récupère les fichiers d'un dossier via l'API GitHub
     function fetchFolder(folderName) {
       return fetch(`${API}/${folderName}`)
         .then(r => r.json())
@@ -144,7 +159,6 @@
         );
     }
 
-    // Récupère la liste des dossiers dans files/
     fetch(API)
       .then(r => {
         if (!r.ok) throw new Error(`API GitHub inaccessible (${r.status})`);
@@ -157,7 +171,6 @@
           .filter(e => e.type === 'dir')
           .map(e => e.name)
           .sort((a, b) => {
-            // Versions numériques décroissantes d'abord
             if (isVersion(a) && isVersion(b)) return b.localeCompare(a, undefined, { numeric: true });
             if (isVersion(a)) return -1;
             if (isVersion(b)) return 1;
@@ -165,27 +178,40 @@
           });
 
         if (!folders.length) {
-          document.getElementById('releases').innerHTML = '<p>Aucun fichier disponible.</p>';
+          document.getElementById('latest-release').innerHTML = '<p>Aucun fichier disponible.</p>';
           return;
         }
 
-        const container = document.getElementById('releases');
+        const latestContainer = document.getElementById('latest-release');
+        const oldContainer = document.getElementById('old-releases-container');
+        const toggleZone = document.getElementById('old-releases-toggle');
 
-        // Pour chaque dossier, charge ses fichiers puis affiche
         Promise.all(folders.map(folder =>
           fetchFolder(folder).then(files => ({ folder, files }))
         )).then(results => {
-          results.forEach(({ folder, files }) => {
+          results.forEach(({ folder, files }, index) => {
             if (!files.length) return;
+            
+            const isLatest = (index === 0);
             const label = isVersion(folder) ? `Version ${folder}` : `📁 ${folder}`;
             const div = document.createElement('div');
             div.className = 'release';
-            div.innerHTML = `<h2>${label}</h2><div class="files">` +
-              files.map(f =>
+            
+            let html = `<h2>${label}`;
+            if (isLatest) html += `<span class="latest-label">Dernière version</span>`;
+            html += `</h2><div class="files">`;
+            html += files.map(f =>
                 `<a class="btn ${extClass(f)}" href="files/${folder}/${f}">${extIcon(f)} ${f}</a>`
-              ).join('') +
-            `</div>`;
-            container.appendChild(div);
+              ).join('');
+            html += `</div>`;
+            div.innerHTML = html;
+
+            if (isLatest) {
+              latestContainer.appendChild(div);
+            } else {
+              toggleZone.style.display = 'block';
+              oldContainer.appendChild(div);
+            }
           });
         });
       })
