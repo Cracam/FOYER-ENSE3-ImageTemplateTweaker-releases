@@ -91,7 +91,8 @@
     @media (max-width: 800px) {
       .layout { grid-template-columns: 1fr; }
     }
-      .changelog { background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap; font-family:inherit; margin:6px 0 0;margin-top: 20px; }
+      .changelog { background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap; font-family:inherit; margin:6px 0 0; }
+      .changelog-title { margin-top: 20px; }
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
@@ -234,7 +235,7 @@
                         <div class="files">` +
                         installers.map(f => `<a class="btn ${extClass(f)}" href="files/${folder}/${f}">${extIcon(f)} ${f}</a>`).join('') +
                       `</div>` +
-                      (hasChangelog ? `<div class="file-group-title">📝 Changelog</div><pre class="changelog" data-folder="${folder}">Chargement...</pre>` : '') +
+                      (hasChangelog ? `<div class="file-group-title changelog-title">📝 Changelog</div><pre class="changelog" data-folder="${folder}">Chargement...</pre>` : '') +
                       `</div>`;
             }
         
