@@ -1,0 +1,5 @@
+## What's Changed
+* Adding internationalization (english French) by @Cracam in https://github.com/Cracam/ImageTemplateTweaker/pull/173
+
+
+**Full Changelog**: https://github.com/Cracam/ImageTemplateTweaker/compare/1.8.2...1.8.3
