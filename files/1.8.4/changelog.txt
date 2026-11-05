@@ -1,0 +1,2 @@
+* correct the add squeletton ikon by @Cracam in https://github.com/Cracam/ImageTemplateTweaker/pull/175
+* Improve popup menus and preview navigation by @Cracam in https://github.com/Cracam/ImageTemplateTweaker/pull/176
