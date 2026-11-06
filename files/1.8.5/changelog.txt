@@ -1,0 +1,2 @@
+- Improve the Image loading interfaces by adding frame for strech padding rotation 
+- add a checker background for improved lisibility
