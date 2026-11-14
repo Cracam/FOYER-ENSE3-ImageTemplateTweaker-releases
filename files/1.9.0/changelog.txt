@@ -1,0 +1,13 @@
+* Add a skin interface window showing each linked layer and its processing steps as a clear visual pipeline
+* Improve random dispersion: copies now keep a real gap between them and stay inside the borders, with faster drawing and a single gap slider
+* Rebuild random image allocation with a clearer layout and a live preview of the slots
+* Improve previews: sharper images, enlarged view on hover with zoom, and a flash that shows which zones a layer affects
+* Add a setting to change the preview size
+* Add custom .itskel and .itskin file types: double-click a file to open it in the app
+* Add "Open recent" menus with previews
+* Add previews to the design and skeleton choice lists
+* Add a menu entry to remove skeletons from the storage
+* Show a progress bar while saving, and clearer loading steps with error messages
+* Treat designs embedded in a skeleton as default designs
+* Add language and theme choices to the menu bar, plus tooltips on icon-only buttons
+* Fix layout glitches such as overlapping rows and an overly wide left panel
