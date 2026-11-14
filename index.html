@@ -86,6 +86,13 @@
     }
     .diagram-panel h2 { font-size: 18px; margin-bottom: 12px; }
     .diagram-panel p { font-size: 14px; color: #555; margin-bottom: 12px; }
+    .legend { border-collapse: collapse; width: 100%; font-size: 14px; }
+    .legend th, .legend td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; vertical-align: middle; }
+    .legend th { background: #eee; }
+    .compat { display: flex; align-items: center; gap: 12px; margin: 16px 0; font-size: 14px; font-weight: 600; text-align: center; }
+    .compat::before, .compat::after { content: ''; flex: 1; border-top: 2px solid currentColor; }
+    .compat-orange { color: #ef6c00; }
+    .compat-red { color: #c62828; }
     .mermaid { max-width: 100%; overflow: auto; }
 
     @media (max-width: 800px) {
@@ -138,12 +145,20 @@
       <p>Étapes principales pour utiliser l’application :</p>
       <div class="mermaid">
         flowchart TD
-          A["⬇ Télécharger l'exécutable"] --> B["Importer les squelettes de carte (3€ ou 6€)"]
-          B --> C["✏️ Éditer sa carte !"]
+          A["<img src='icon.png' width='24'/> Télécharger l'exécutable"] --> B["<img src='skeleton-icon.png' width='24'/><img src='fish-bones.svg' width='24'/> Importer les squelettes de carte (3€ ou 6€)<br/>(fichiers .itskel)"]
+          B --> C["<img src='skin-icon.png' width='24'/><img src='fish-body.svg' width='24'/> ✏️ Éditer sa carte !<br/>(fichiers .itskin)"]
           C --> D["📤 Envoie ta carte au bureau<br/>(tout le .zip)"]
           D --> E["🖨️ Le bureau exporte ta carte<br/>en haute qualité et l'imprime"]
           E --> F["🎉 Découvre ta carte au foyer"]
       </div>
+      <h3 style="font-size:15px;margin:16px 0 8px">Légende des icônes</h3>
+      <table class="legend">
+        <thead><tr><th>Icônes</th><th>Signification</th></tr></thead>
+        <tbody>
+          <tr><td><img src="skeleton-icon.png" width="32" alt="Squelette"> <img src="fish-bones.svg" width="32" alt="Squelette"></td><td>Squelette de carte (fichier <code>.itskel</code>)</td></tr>
+          <tr><td><img src="skin-icon.png" width="32" alt="Skin"> <img src="fish-body.svg" width="32" alt="Skin"></td><td>Skin / carte personnalisée (fichier <code>.itskin</code>)</td></tr>
+        </tbody>
+      </table>
     </aside>
   </div>
 
@@ -173,6 +188,16 @@
         );
     }
 
+    const COMPAT = {
+      'skeleton-update': { cls: 'orange', icon: '🟠', title: 'Squelette à mettre à jour' },
+      'skin-incompatible': { cls: 'red', icon: '🔴', title: 'Skin incompatible' },
+      'skeleton-incompatible': { cls: 'red', icon: '🔴', title: 'Squelette incompatible' },
+      'incompatible': { cls: 'red', icon: '🔴', title: 'Skin et squelette incompatibles' }
+    };
+    const compatPromise = fetch(`files/compatibility.json`)
+      .then(r => r.ok ? r.json() : {})
+      .catch(() => ({}));
+
     fetch(API)
       .then(r => {
         if (!r.ok) throw new Error(`API GitHub inaccessible (${r.status})`);
@@ -200,9 +225,9 @@
         const oldContainer = document.getElementById('old-releases-container');
         const toggleZone = document.getElementById('old-releases-toggle');
 
-        Promise.all(folders.map(folder =>
+        Promise.all([compatPromise, ...folders.map(folder =>
           fetchFolder(folder).then(files => ({ folder, files }))
-        )).then(results => {
+        )]).then(([compat, ...results]) => {
           results.forEach(({ folder, files }, index) => {
             if (!files.length) return;
         
@@ -227,6 +252,12 @@
             let html = `<h2>${label}`;
             if (isLatest) html += `<span class="latest-label">Dernière version</span>`;
             html += `</h2>`;
+
+            const c = compat[folder];
+            const lvl = c && COMPAT[c.level];
+            if (lvl) {
+              html += `<div class="compat compat-${lvl.cls}"><span>${lvl.icon} ${c.message || lvl.title}</span></div>`;
+            }
         
             // 1. Groupe Installeurs
             if (installers.length > 0) {
