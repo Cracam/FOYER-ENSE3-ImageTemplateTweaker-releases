@@ -1,54 +1,15 @@
-* **Chargement hors fil JavaFX :** les interfaces sont construites en arrière-plan, la barre de progression est une barre JavaFX simple (la surcouche Swing disparaît), et la boucle d'événements du panneau est pilotée par un thread minuteur.
-* **Préchauffage et construction directe :** préchauffage en arrière-plan, et `LayerInsertZone` construit en code.
-* **Parallélisme :**
-* rendu de l'arbre dépendance par dépendance, avec des générateurs de texte qui ne partagent plus d'état ;
-* interfaces des calques construites en parallèle (branches du skin puis structure du squelette) ;
-* séparateurs et état des liens calculés une fois après le chargement du squelette, au lieu de façon quadratique.
-* **Dispersion aléatoire (cette session) :**
-* silhouette et pyramide de résolutions mises en cache par image source ;
-* tests de placement moins coûteux et tampons réutilisés, avec les mêmes positions à graine égale (placement 6 à 31 % plus rapide) ;
-* rendu en bandes de lignes parallèles, 3 à 5 fois plus rapide sur le banc d'essai, avec l'image interne de 2× à 1,5×.
-* **Corrections liées :**
-* fuite mémoire des éditeurs fermés ;
-* thème AtlantaFX perdu par le préchauffage ;
-* aperçu périmé après un chargement ;
-* minuteurs de rafraîchissement démarrés sur le fil JavaFX.
-* **Skin edit :**
-* un historique sur toutes les valeurs des interfaces ;
-* boutons et Ctrl+Z / Ctrl+Y ;
-* l'éditeur d'images garde ses petits pas, avec un seul pas global par ouverture ;
-* le conteneur d'allocation aléatoire en est exclu.
-* **Skeleton edit :**
-* deuxième historique pour le skin, séparé de celui du squelette ;
-* boutons orange puis SVG, Ctrl+Z qui suit l'onglet affiché ;
-* historique du skin vidé quand un pas du squelette reconstruit des interfaces ;
-* flèches du skin dans la fenêtre des interfaces de la peau.
-* **Course corrigée :** les écouteurs ajoutés par plusieurs threads sur les composants partagés (`ModalPane`, largeur du panneau principal) corrompaient les listes d'écouteurs.
-* **Poissons :**
-* fish-body en dégradé bleu écaillé avec contour, selon le thème ;
-* fish-bones en gris `#cccccc` avec contour.
-* **Boutons :** `HistoryButtons.pair`, un double bouton réutilisable, aux couleurs des poissons.
-* **Chargement :** logos ×1,5, poissons qui tournent, contour vert ou rouge selon l'état.
-* **Processeurs :** fenêtres de paramètres, ajout, suppression et déplacement dans les blocs conteneurs (déclarés par les « slots » de processeur). Un calque reconstruit retrouve ses valeurs de skin par processeur, plus par position.
-* **Réorganisation par glisser-déposer :**
-* poignée sur la pastille de processeur ;
-* le bloc suit le pointeur, les autres glissent ;
-* le mode réorganisation masque l'icône d'image, le champ « Name » et le choix d'onglet.
-* **Liens et onglets :**
-* bloc de lien entre calques, en dégradé or-turquoise ;
-* choix de l'onglet de skin d'un calque ;
-* la longueur de retour à la ligne suit la largeur du calque.
-* **Onglet des skins par défaut :** nouveau (vierge), dupliquer, ouvrir (propose d'enregistrer le précédent), supprimer (en tapant le nom), avec aperçus, plus l'import d'un fichier de skin. Le mot « design » est remplacé par « skin ». Correction du volet des métadonnées.
-* **Menus :** menu admin à côté du bloc DPI (export et verrou), menu Fichier qui ouvre le dossier de l'application.
-* **Structure :** une classe d'origine `InterfaceBlock`, un seul flux `FlowContainerPane`, des `ContainerBlock`. Les flux imbriqués ne demandent jamais plus que leur parent.
-* **Allocation aléatoire :**
-* éditeur de zones (ajouter, dupliquer, supprimer, verrou des proportions, couleurs contrastées avec l'image) ;
-* accès direct depuis la pastille ;
-* blocs de répartition et position / taille séparés ;
-* la partie commune de la chaîne affiche chaque processeur, met à jour, sauvegarde et charge toute la chaîne.
-* **Fenêtres du skin :** deux blocs ouverts par deux boutons, une seule taille maximale d'image pour tous les éditeurs, remplissage de lignes, défilement d'ensemble.
-* **Cadres des fenêtres :** bande gauche à l'icône du type de processeur (nom en infobulle), cadre à deux couleurs, boutons d'info et de taille, icône fish-body.
-* **Dispersion et masques :** la chaîne du générateur dispersé s'affiche en premier. Éditeur de masque avec aperçu, images conservées et damier selon le thème.
-* **Journaux :** la sortie console est écrite dans `Logs/` du dossier de l'application, et le menu de sauvegarde automatique tolère les noms de fichier sans date.
-* **Intégration continue :** tests unitaires et test de fumée de l'application empaquetée sur Linux, Windows et macOS, avant les installeurs. Les trois systèmes vont jusqu'au bout, et les journaux et rapports sont toujours publiés en artefacts.
-* **Tests :** `ResourcesManagerTest` et le fichier d'exemple `sample.itskel` (2 Mo) pour le test de fumée. Le test de fumée choisit seul le premier skin par défaut à l'ouverture d'un squelette.
+**Ce que la branche change pour l'utilisateur :**
+
+- **Plus rapide** : le chargement des squelettes et des skins est plus fluide, avec une barre de progression simple, et le rendu de la dispersion aléatoire est 3 à 5 fois plus rapide.
+- **Annuler / rétablir** : disponible dans le skin edit (Ctrl+Z / Ctrl+Y et boutons). L'éditeur d'images compte pour une seule étape. Le skeleton edit a deux historiques séparés, un pour le squelette et un pour le skin.
+- **Skeleton edit enrichi** :
+  - fenêtres de paramètres des processeurs ;
+  - réorganisation par glisser-déposer ;
+  - liens entre calques et choix de l'onglet ;
+  - gestion des skins par défaut (nouveau, dupliquer, ouvrir, supprimer, importer) ;
+  - menus admin et Fichier.
+- **Allocation aléatoire** : nouvel éditeur de zones, accessible directement depuis la pastille du processeur.
+- **Interface retouchée** : icônes poisson en dégradé bleu écaillé et gris, boutons annuler/rétablir colorés, logos de chargement agrandis, poissons qui tournent avec un contour vert ou rouge selon l'état.
+- **Fiabilité** : plus de plantages dus à la construction parallèle de l'interface, journaux enregistrés dans `Logs/`, tests automatiques sur Linux, Windows et macOS.
+
+À vérifier à l'écran avant de fusionner : l'historique, les icônes dans les deux thèmes et l'animation de chargement.
