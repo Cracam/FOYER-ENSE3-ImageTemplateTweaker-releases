@@ -1,5 +1,3 @@
-**Ce que la branche change pour l'utilisateur :**
-
 - **Plus rapide** : le chargement des squelettes et des skins est plus fluide, avec une barre de progression simple, et le rendu de la dispersion aléatoire est 3 à 5 fois plus rapide.
 - **Annuler / rétablir** : disponible dans le skin edit (Ctrl+Z / Ctrl+Y et boutons). L'éditeur d'images compte pour une seule étape. Le skeleton edit a deux historiques séparés, un pour le squelette et un pour le skin.
 - **Skeleton edit enrichi** :
