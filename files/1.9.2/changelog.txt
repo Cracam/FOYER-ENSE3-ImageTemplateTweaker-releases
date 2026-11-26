@@ -1,3 +1,3 @@
-* huge improvement on all image layout x1.5 +x10 for allocator
-* huge improvement in gradient for high  zero opacity application 
-* huge improvement in heavy gradients 
+* huge performance improvement on all image layout x1.5 +x10 for allocator
+* huge performance improvement in gradient for high  zero oppacity application 
+* huge performance improvement in heavy gradients 
