@@ -1,5 +1,6 @@
 {
   "1.9.0": { "level": "skeleton-update", "message": "Les squelettes de la version précédente doivent être mis à jour (Carte 3 Euro.itskel / Carte 6 Euro.itskel). \n Et le texte sous titre sera à réajuster" },
-  "1.9.1": { "level": "skeleton-update", "message": "Les squelettes de la version précédente doivent être mis à jour (Carte 3 Euro.itskel / Carte 6 Euro.itskel). \n les gaines pouvaient dépasser sur le centre de la carte" }
+  "1.9.1": { "level": "skeleton-update", "message": "Les squelettes de la version précédente doivent être mis à jour (Carte 3 Euro.itskel / Carte 6 Euro.itskel). \n les gaines pouvaient dépasser sur le centre de la carte" },
+  "1.9.3": { "level": "skeleton-update", "message": "Les squelettes de la version précédente doivent être mis à jour (Carte 3 Euro.itskel / Carte 6 Euro.itskel). \n Réajustment plus propre de la marge au niveau des bords des graines" }
 
 }
