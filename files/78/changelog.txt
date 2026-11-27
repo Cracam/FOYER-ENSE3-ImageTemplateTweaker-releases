@@ -1,1 +1,0 @@
-* Check macOS CI: composition bands off (Bridson on)
