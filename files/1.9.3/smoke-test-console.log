@@ -1,0 +1,39 @@
+
+(java:2399): dbind-WARNING **: 14:47:12.961: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
+[INFO] Register of the app created
+[INFO] Répertoire de l'application : /home/runner/.imageTemplateTweaker
+[INFO] Répertoire créé : /home/runner/.imageTemplateTweaker/SkeletonsData
+[INFO] Répertoire créé : /home/runner/.imageTemplateTweaker/Autosaves
+[INFO] Répertoire créé : /home/runner/.imageTemplateTweaker/LocalData
+Log file: /home/runner/.imageTemplateTweaker/Logs/app_20261127_144713.log
+Error: Failed to load recent files: /home/runner/.imageTemplateTweaker/LocalData/OpenRecentData_Skin.properties (No such file or directory)
+IOException in loadRecentFiles: /home/runner/.imageTemplateTweaker/LocalData/OpenRecentData_Skin.properties (No such file or directory)
+Error: Failed to load recent files: /home/runner/.imageTemplateTweaker/LocalData/OpenRecentData_Skeleton.properties (No such file or directory)
+IOException in loadRecentFiles: /home/runner/.imageTemplateTweaker/LocalData/OpenRecentData_Skeleton.properties (No such file or directory)
+
+(java:2399): Gdk-WARNING **: 14:47:13.650: XSetErrorHandler() called with a GDK error trap pushed. Don't do that.
+smoke: opening /home/runner/work/ImageTemplateTweaker/ImageTemplateTweaker/ImageTemplateTweaker/src/test/resources/smoke/sample.itskel (loadingManager=LoadingManager[id=menuFile, styleClass=[menu-item, menu]])
+smoke: on the JavaFX thread, opening the skeleton
+java.io.FileNotFoundException: /home/runner/.imageTemplateTweaker/LocalData/UserData.txt (No such file or directory)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:213)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:152)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:106)
+	at java.base/java.io.FileReader.<init>(FileReader.java:60)
+	at com.cracam.imagetemplatetweaker.interfaces.skin.metadata.InterfaceMetadataEditor.initializeAuthorFromLocalData(InterfaceMetadataEditor.java:130)
+	at com.cracam.imagetemplatetweaker.interfaces.skin.metadata.InterfaceMetadataEditor.finishInterfaceInit(InterfaceMetadataEditor.java:87)
+	at com.cracam.imagetemplatetweaker.interfaces.BaseInterface.initInterface(BaseInterface.java:68)
+	at com.cracam.imagetemplatetweaker.interfaces.BaseInterface.initialiseInterface(BaseInterface.java:90)
+	at com.cracam.imagetemplatetweaker.treeNode.imageprocessor.ImageProcessorNode.createLinkedInterface(ImageProcessorNode.java:121)
+	at com.cracam.imagetemplatetweaker.treeNode.imageprocessor.manager.ImageProcessorEditorManager.createInterfaces(ImageProcessorEditorManager.java:194)
+	at com.cracam.imagetemplatetweaker.treeNode.imageprocessor.manager.ImageProcessorEditorManager.finishTreeLoad(ImageProcessorEditorManager.java:144)
+	at com.cracam.imagetemplatetweaker.treeNode.imageprocessor.manager.ImageProcessorEditorManager.buildTreeFromSkeletonResources(ImageProcessorEditorManager.java:369)
+	at com.cracam.imagetemplatetweaker.treeNode.imageprocessor.manager.ImageProcessorEditorManager.loadSkeletonFromResourcesManager(ImageProcessorEditorManager.java:411)
+	at com.cracam.imagetemplatetweaker.loadingmanager.Loader.lambda$loadSkeletonFromMainResourcesManager$12(Loader.java:614)
+	at com.cracam.imagetemplatetweaker.loadingmanager.BackgroundWork.lambda$run$1(BackgroundWork.java:54)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+smoke: openExternalFile returned
+SMOKE loading took 9768 ms
+SMOKE image Recto (id 442486815): 1039x685, 100.0 % not transparent, 1831 distinct colours
+SMOKE image Verso (id 75447164): 1039x685, 100.0 % not transparent, 1390 distinct colours
+SMOKE TEST PASSED
