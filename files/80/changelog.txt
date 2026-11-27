@@ -1,2 +1,0 @@
-* Composition bands: off on macOS (CI smoke test failed there); Bridson placement back
-* Check macOS CI: previous dispersion placement (bands on)
